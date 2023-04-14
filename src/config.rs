@@ -14,7 +14,7 @@ pub struct CliOptions {
     pub connection_limit: usize,
     #[structopt(long = "port", short = "p", default_value = "389", use_delimiter = true)]
     pub ports: Vec<Port>,
-    #[structopt(long = "timeout", short = "t", default_value = "5")]
+    #[structopt(long = "timeout", short = "t", default_value = "2")]
     pub timeout: u64,
 }
 

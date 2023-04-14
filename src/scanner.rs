@@ -4,7 +4,6 @@ use crate::report::report_server;
 use std::net::{IpAddr, SocketAddr, Ipv4Addr};
 use tokio::sync::Semaphore;
 use tokio::time::{timeout, Duration};
-use tokio::task;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::sync::Arc;
 
@@ -42,14 +41,7 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
                             return Some(addr);
                         }
                     }
-                    Ok(Err(err)) => {
-                        // Print errors from check_ldap_anonymous
-                        println!("Error while checking {}: {:?}", addr, err);
-                    }
-                    Err(err) => {
-                        // Print errors from timeout
-                        println!("Timeout error while checking {}: {:?}", addr, err);
-                    }
+                    _ => {}
                 }
                 pb_clone.inc(1);
                 None
