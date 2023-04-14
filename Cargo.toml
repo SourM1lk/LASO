@@ -1,0 +1,13 @@
+[package]
+name = "LASO"
+version = "0.1.0"
+edition = "2021"
+author = "SourMilk"
+
+[dependencies]
+tokio = { version = "*", features = ["full"] }
+ldap3 = "*"
+structopt = "*"
+colored = "*"
+rand = "*"
+indicatif = "*"
