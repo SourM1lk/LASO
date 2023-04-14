@@ -31,7 +31,7 @@ The compiled binary will be located in the `target/release` folder.
 ``
 
 ## Usage
-``
+```
 ./LASO --help
      ___       ___           ___           ___     
     /\__\     /\  \         /\  \         /\  \    
@@ -62,7 +62,7 @@ OPTIONS:
 
 ARGS:
     <ip-range>  
-``
+```
 
 ## Disclaimer
 ```
