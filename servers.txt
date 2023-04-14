@@ -1,4 +1,0 @@
-Server: 77.121.160.67:389 (Anonymous: true, Unauthenticated: false)
-Server: 77.121.160.67:389 (Anonymous: true, Unauthenticated: false)
-Server: 77.121.160.67:389 (Anonymous: true, Unauthenticated: false)
-Server: 77.121.160.67:389 (Anonymous: true, Unauthenticated: false)
