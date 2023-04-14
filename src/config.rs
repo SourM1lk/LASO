@@ -5,7 +5,7 @@ use std::num::ParseIntError;
 
 #[derive(StructOpt)]
 #[structopt(
-    name = "LDAP Anonymous Security Observer",
+    name = "LDAP Anonymous Scanner & Observer",
     about = "A Rust-based security tool that identifies anonymous login vulnerabilities in LDAP servers.",
 )]
 pub struct CliOptions {
