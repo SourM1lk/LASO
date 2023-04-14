@@ -8,16 +8,16 @@ Add ldaps check without cert
 ```
 
 ## Features
-``
+```
 - Scans IP ranges for LDAP servers with anonymous and unauthenticated access
 - Supports multiple ports for each IP
 - Uses asynchronous programming for fast scanning
 - Configurable connection limits and timeouts
 - Generates a report with found servers
-``
+```
 
 ## Installation
-``
+```
 1. Install Rust: https://rustup.rs/
 
 2. Clone this repository: 
@@ -28,7 +28,7 @@ cd laso
 cargo build --release
 
 The compiled binary will be located in the `target/release` folder.
-``
+```
 
 ## Usage
 ```
