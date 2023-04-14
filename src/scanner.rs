@@ -1,5 +1,6 @@
 use crate::config::ScannerConfig;
 use crate::ldap::check_ldap_anonymous;
+use crate::report::report_server;
 use std::net::{IpAddr, SocketAddr, Ipv4Addr};
 use tokio::sync::Semaphore;
 use tokio::time::{timeout, Duration};
@@ -37,10 +38,7 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
                 match timeout(Duration::from_secs(config.timeout), check_ldap_anonymous(addr)).await {
                     Ok(Ok((anonymous_enabled, unauthenticated_enabled))) => {
                         if anonymous_enabled || unauthenticated_enabled {
-                            println!(
-                                "Found LDAP server with anonymous access: {:?} (Anonymous: {}, Unauthenticated: {})",
-                                addr, anonymous_enabled, unauthenticated_enabled
-                            );
+                            report_server(addr, anonymous_enabled, unauthenticated_enabled);
                             return Some(addr);
                         }
                     }

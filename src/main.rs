@@ -10,6 +10,7 @@ use tokio::runtime::Runtime;
 mod config;
 mod ldap;
 mod scanner;
+mod report;
 
 fn main() {
     display_welcome_message();
@@ -19,7 +20,7 @@ fn main() {
 
     // Create the Tokio runtime and run the scanner
     let rt = Runtime::new().expect("Failed to create Tokio runtime");
-    let valid_servers = rt.block_on(scan(config));
+    rt.block_on(scan(config));
 }
 
 fn display_welcome_message() {
