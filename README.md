@@ -1,5 +1,10 @@
 # LDAP Anonymous Security Observer
 
+## TODO
+```
+Add ldaps check without cert
+```
+
 ## Help
 ```
 
