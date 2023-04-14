@@ -1,9 +1,15 @@
 use std::net::SocketAddr;
-use ldap3::{LdapConnAsync, LdapError};
+use ldap3::{LdapConnAsync, LdapError, LdapConnSettings};
 
 pub async fn check_ldap_anonymous(addr: SocketAddr) -> Result<(bool, bool), LdapError> {
-    let ldap_url = format!("ldap://{}", addr);
-    let (_, mut ldap) = LdapConnAsync::new(&ldap_url).await?;
+        let scheme = if addr.port() == 636 { "ldaps" } else { "ldap" };
+        let ldap_url = format!("{}://{}", scheme, addr);
+    
+        let settings = LdapConnSettings::new()
+            .set_no_tls_verify(true); // Disable certificate validation
+    
+        let (_, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url).await?;
+    
 
     println!("ldap trying {}", ldap_url);
     // Check for anonymous bind
