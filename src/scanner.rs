@@ -11,19 +11,19 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
     let semaphore = Arc::new(Semaphore::new(config.connection_limit));
     let (start_ip, end_ip) = config.ip_range;
     let mut valid_servers = Vec::new();
-    let mut tasks = Vec::new();
+    let chunk_size = config.connection_limit;
 
-    // Get total IP Count for Progress Bar
-    // TODO: Multiply by the number of ports the user sets
     let total_ips = ip_range(start_ip, end_ip).count();
 
-    // Initialize a progress bar
     let pb = ProgressBar::new(total_ips as u64);
     let progress_style = ProgressStyle::default_bar()
         .template("{spinner:.green} [{elapsed_precise}] [{wide_bar:.cyan/blue}] {pos:>7}/{len:7}")
         .expect("Failed to create progress bar template")
         .progress_chars("=#-");
     pb.set_style(progress_style);
+
+    let mut tasks = Vec::new();
+    let mut task_count = 0;
 
     for ip in ip_range(start_ip, end_ip) {
         for port in &config.ports {
@@ -33,7 +33,7 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
 
             let task = tokio::spawn(async move {
                 let _permit = semaphore_clone.acquire().await.unwrap();
-            
+
                 match timeout(Duration::from_secs(config.timeout), check_ldap_anonymous(addr)).await {
                     Ok(Ok((anonymous_enabled, unauthenticated_enabled))) => {
                         if anonymous_enabled || unauthenticated_enabled {
@@ -46,19 +46,32 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
                 pb_clone.inc(1);
                 None
             });
-            
+
             tasks.push(task);
+            task_count += 1;
+
+            if task_count == chunk_size {
+                for task in tasks.drain(..) {
+                    if let Ok(Some(server)) = task.await {
+                        valid_servers.push(server);
+                    }
+                }
+                task_count = 0;
+            }
         }
-    }   
+    }
+
+    // Process the remaining tasks
     for task in tasks {
         if let Ok(Some(server)) = task.await {
             valid_servers.push(server);
         }
     }
-    
+
     pb.finish();
     valid_servers
 }
+
 
 fn ip_range(start_ip: IpAddr, end_ip: IpAddr) -> impl Iterator<Item = IpAddr> {
     let start = match start_ip {
