@@ -7,7 +7,6 @@ Add ldaps check without cert
 
 ## Help
 ```
-
      ___       ___           ___           ___     
     /\__\     /\  \         /\  \         /\  \    
    /:/  /    /::\  \       /::\  \       /::\  \   
@@ -33,8 +32,8 @@ FLAGS:
 OPTIONS:
     -c, --connection_limit <connection-limit>     [default: 1000]
     -p, --port <ports>...                         [default: 389]
-    -t, --timeout <timeout>                       [default: 5]
+    -t, --timeout <timeout>                       [default: 2]
 
 ARGS:
-    <ip-range>    
+    <ip-range>  
 ```
