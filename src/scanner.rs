@@ -15,6 +15,7 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
     let mut tasks = Vec::new();
 
     // Get total IP Count for Progress Bar
+    // TODO: Multiply by the number of ports the user sets
     let total_ips = ip_range(start_ip, end_ip).count();
 
     // Initialize a progress bar
@@ -31,10 +32,9 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
             let pb_clone = pb.clone();
             let semaphore_clone = Arc::clone(&semaphore);
 
-            let task = task::spawn(async move {
+            let task = tokio::spawn(async move {
                 let _permit = semaphore_clone.acquire().await.unwrap();
-
-                println!("Trying: {}", addr);
+            
                 match timeout(Duration::from_secs(config.timeout), check_ldap_anonymous(addr)).await {
                     Ok(Ok((anonymous_enabled, unauthenticated_enabled))) => {
                         if anonymous_enabled || unauthenticated_enabled {
@@ -42,11 +42,19 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
                             return Some(addr);
                         }
                     }
-                    _ => {}
+                    Ok(Err(err)) => {
+                        // Print errors from check_ldap_anonymous
+                        println!("Error while checking {}: {:?}", addr, err);
+                    }
+                    Err(err) => {
+                        // Print errors from timeout
+                        println!("Timeout error while checking {}: {:?}", addr, err);
+                    }
                 }
                 pb_clone.inc(1);
                 None
             });
+            
             tasks.push(task);
         }
     }   
