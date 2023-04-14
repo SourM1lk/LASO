@@ -11,6 +11,19 @@ pub async fn scan(config: ScannerConfig) -> Vec<SocketAddr> {
     let semaphore = Arc::new(Semaphore::new(config.connection_limit));
     let (start_ip, end_ip) = config.ip_range;
     let mut valid_servers = Vec::new();
+
+    /* 
+    EXAMPLE FOR CHUCK SIZE
+    Let N = 8,000,000 (number of IPs), P = 1 (number of ports),
+    C = 1,000 (connection limit), and T be the total number of tasks.
+
+    1. Calculate the total number of tasks: T = N * P = 8,000,000 * 1 = 8,000,000
+    2. Calculate the chunk size: chunk_size = C = 1,000
+    3. Calculate the number of chunks: num_chunks = ceil(T / chunk_size) = ceil(8,000,000 / 1,000) = 8,000
+    `ceil(x)` is the mathematical function that rounds up `x` to the nearest integer.
+
+    chunk_size = 8,000
+    */
     let chunk_size = config.connection_limit;
 
     let total_ips = ip_range(start_ip, end_ip).count();
